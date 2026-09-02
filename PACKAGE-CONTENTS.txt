@@ -16,9 +16,16 @@ public/icons/favicon.ico
 public/icons/favicon.svg
 public/icons/logo.svg
 public/images/README-REAL-PHOTOS.txt
+public/images/mercado-central-san-jose-condimentos.jpg
+public/images/mercado-central-san-jose-entrada-historica.jpg
+public/images/mercado-central-san-jose-especias.jpg
+public/images/mercado-central-san-jose-fachada.jpg
+public/images/mercado-central-san-jose-interior.jpg
+public/images/mercado-central-san-jose-verduleria.jpg
 public/robots.txt
 scripts/audit-language.mjs
 scripts/audit-source.mjs
+scripts/verify-build.mjs
 src/layouts/BaseLayout.astro
 src/pages/404.astro
 src/pages/configuracion-de-cookies.astro
