@@ -1,0 +1,22 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout title="Configuración de cookies | Guía Mercado Central de San José" description="Administre sus preferencias de cookies para la guía independiente del Mercado Central de San José.">
+<section class="legal-page"><div class="wrap" style="max-width:820px">
+<span class="eyebrow">Privacidad</span><h1>Configuración de cookies</h1><p><strong>Última actualización: septiembre de 2026</strong></p><p>Utilizamos cookies y almacenamiento local para funciones esenciales y, sólo con su permiso, para analítica.</p>
+<div class="cookie-row"><div><strong>Cookies necesarias</strong><p class="muted">Son esenciales para guardar las preferencias del sitio. No se pueden desactivar desde este panel.</p></div><button class="switch" aria-pressed="true" disabled>Siempre activas</button></div>
+<div class="cookie-row"><div><strong>Google Analytics</strong><p class="muted">Recopila información de uso para ayudarnos a comprender el tráfico del sitio. No se carga hasta que usted lo permite.</p></div><button id="analytics" class="switch" aria-pressed="false">Desactivado</button></div>
+<div class="cookie-row"><div><strong>Preferencias</strong><p class="muted">Guarda opciones locales del sitio en su navegador.</p></div><button id="preferences" class="switch" aria-pressed="true">Activadas</button></div>
+<div class="cookie-row"><div><strong>Marketing / publicidad personalizada</strong><p class="muted">Este proyecto no instala cookies propias de marketing ni activa publicidad personalizada.</p></div><button class="switch" aria-pressed="false" disabled>Desactivado</button></div>
+<div class="cookie-actions"><button id="save" class="btn btn-solid">Guardar preferencias</button><button id="reject" class="btn">Rechazar opcionales</button></div>
+<p id="status" class="notice" style="display:none" role="status"></p>
+</div></section>
+<script is:inline>
+const key='mc-sj-cookie-preferences'; const a=document.getElementById('analytics'), p=document.getElementById('preferences'), status=document.getElementById('status');
+function set(btn,v){btn.setAttribute('aria-pressed',String(v));btn.textContent=v?'Activadas':'Desactivado'}
+try{const cur=JSON.parse(localStorage.getItem(key)||'{}');set(a,cur.analytics===true);set(p,cur.preferences!==false)}catch(e){}
+a.onclick=()=>set(a,a.getAttribute('aria-pressed')!=='true');p.onclick=()=>set(p,p.getAttribute('aria-pressed')!=='true');
+document.getElementById('save').onclick=()=>{const data={analytics:a.getAttribute('aria-pressed')==='true',preferences:p.getAttribute('aria-pressed')==='true'};localStorage.setItem(key,JSON.stringify(data));if(data.analytics&&window.__mcLoadGA)window.__mcLoadGA();status.style.display='block';status.textContent='Preferencias guardadas.'};
+document.getElementById('reject').onclick=()=>{set(a,false);set(p,false);localStorage.setItem(key,JSON.stringify({analytics:false,preferences:false}));status.style.display='block';status.textContent='Se rechazaron las cookies opcionales.'};
+</script>
+</BaseLayout>

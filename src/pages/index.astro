@@ -1,0 +1,132 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+const site = Astro.site;
+const pageUrl = site ? new URL('/', site).toString() : undefined;
+const imageUrl = site ? new URL('/images/mercado-central-san-jose-fachada.jpg', site).toString() : undefined;
+const placeId = pageUrl ? `${pageUrl}#mercado-central-san-jose` : '#mercado-central-san-jose';
+const sameAs = [
+  'https://www.msj.go.cr/servciud/merc/Paginas/mercado_central.aspx',
+  'https://www.mcj.go.cr/sala-de-prensa/noticias/mejoras-en-iluminacion-gasificacion-y-seguridad-dan-la-bienvenida-los',
+  'https://www.wikidata.org/wiki/Q7414518',
+  'https://maps.app.goo.gl/DFX6n41sMX3djrEA6'
+];
+const placeSchema = {
+  '@context':'https://schema.org', '@type':['TouristAttraction','LocalBusiness'], '@id':placeId,
+  name:'Mercado Central de San José', alternateName:'Mercado Central',
+  description:'Mercado histórico de San José fundado en 1880, con pasillos de alimentos, café, comidas tradicionales, hierbas, artesanías y comercio local.',
+  ...(pageUrl ? {url:pageUrl} : {}), ...(imageUrl ? {image:[imageUrl]} : {}),
+  telephone:'+506 2222 5981', priceRange:'₡',
+  address:{'@type':'PostalAddress',streetAddress:'Avenida Central y Avenida 1, entre calles 6 y 8',addressLocality:'San José',addressRegion:'San José',addressCountry:'CR'},
+  geo:{'@type':'GeoCoordinates',latitude:9.934543490167613,longitude:-84.08457912302394},
+  openingHoursSpecification:[
+    {'@type':'OpeningHoursSpecification',dayOfWeek:['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],opens:'07:30',closes:'19:00'},
+    {'@type':'OpeningHoursSpecification',dayOfWeek:'Sunday',opens:'08:00',closes:'18:00'}
+  ],
+  aggregateRating:{'@type':'AggregateRating',ratingValue:4.4,reviewCount:31375,bestRating:5,worstRating:1},
+  isAccessibleForFree:true, sameAs
+};
+const faqItems = [
+  ['¿Se paga entrada al Mercado Central?','No. El acceso al mercado es gratuito; cada compra, comida o servicio se paga directamente en el respectivo local.'],
+  ['¿Cuánto tiempo conviene dedicarle?','Para una primera visita, entre 1½ y 2 horas permite caminar sin prisa, tomar café y probar comida tradicional.'],
+  ['¿Cuál es el mejor momento para ir?','La mañana entre semana suele ser una buena opción para observar la actividad comercial. Los periodos de almuerzo y los sábados pueden sentirse más concurridos.'],
+  ['¿El mercado es accesible?','La Municipalidad de San José indica que el Mercado Central cuenta con instalaciones accesibles para personas con movilidad reducida.'],
+  ['¿Qué se puede comprar?','Hay productos frescos, carnes y pescados, café, especias, hierbas, artículos de cuero, recuerdos, artesanías y otros productos tradicionales.'],
+  ['¿Los horarios pueden cambiar?','Sí. Feriados, celebraciones y decisiones operativas pueden alterar el horario. Conviene comprobar la información municipal antes de una visita importante.']
+];
+const faqSchema={'@context':'https://schema.org','@type':'FAQPage',mainEntity:faqItems.map(([q,a])=>({'@type':'Question',name:q,acceptedAnswer:{'@type':'Answer',text:a}}))};
+---
+<BaseLayout title="Mercado Central de San José | Guía de visita, comida, historia y cómo llegar" description="Guía independiente del Mercado Central de San José, Costa Rica: historia, horarios, entrada, comida tradicional, transporte, estacionamiento, mapa y consejos de visita.">
+<script type="application/ld+json" set:html={JSON.stringify(placeSchema)}></script>
+<script type="application/ld+json" set:html={JSON.stringify(faqSchema)}></script>
+<section class="hero">
+  <img src="/images/mercado-central-san-jose-fachada.jpg" alt="Fachada del Mercado Central de San José, Costa Rica" width="1600" height="900" fetchpriority="high" />
+  <div class="wrap hero-content">
+    <span class="eyebrow" style="color:#f6cc71">San José · Costa Rica</span>
+    <h1>Mercado Central<br/>de San José</h1>
+    <p>Un laberinto vivo de pasillos, sodas, café, hierbas, frutas, pescaderías y oficios tradicionales en el corazón de la capital costarricense.</p>
+    <div class="pill-row"><span class="pill">Fundado en 1880</span><span class="pill">Patrimonio cultural</span><span class="pill">★ 4,4 · 31.375 reseñas</span></div>
+  </div>
+</section>
+<div class="market-strip"><div class="wrap">CAFÉ · CASADOS · OLLA DE CARNE · ESPECIAS · HIERBAS · CUERO · ARTESANÍA · SORBETERAS · VIDA DE BARRIO</div></div>
+<section class="section"><div class="wrap">
+  <div class="facts">
+    <div class="fact"><span class="eyebrow">Entrada</span><b>Gratuita</b><span class="muted">Las compras se pagan aparte</span></div>
+    <div class="fact"><span class="eyebrow">Horario municipal</span><b>L–S 7:30–19:00</b><span class="muted">Domingo 8:00–18:00</span></div>
+    <div class="fact"><span class="eyebrow">Visita sugerida</span><b>1½–2 horas</b><span class="muted">Para recorrer y comer</span></div>
+    <div class="fact"><span class="eyebrow">Ubicación</span><b>Merced</b><span class="muted">Centro de San José</span></div>
+  </div>
+</div></section>
+<section class="section" id="historia"><div class="wrap story">
+  <div>
+    <span class="eyebrow">Patrimonio cotidiano</span><h2>Un mercado que también cuenta la historia de San José</h2>
+    <p>La Municipalidad de San José identifica al Mercado Central como el mayor mercado de la ciudad y señala que fue fundado en 1880. Su importancia no se limita al comercio: el Ministerio de Cultura y Juventud lo describe como un espacio de transmisión de cocina, herbolaria, artesanía, formas de trato y otras expresiones de la cultura popular costarricense.</p>
+    <p>El conjunto actual conserva huellas de varias etapas arquitectónicas. Un terremoto afectó el edificio original en 1888 y, décadas después, se reconstruyeron sectores con nuevos materiales y lenguaje modernista.</p>
+    <p class="quote">Aquí la visita no consiste en “ver” un monumento: consiste en entrar en una ciudad dentro de la ciudad.</p>
+    <a class="btn" href="https://www.msj.go.cr/servciud/merc/Paginas/mercado_central.aspx" target="_blank" rel="noopener">Fuente municipal ↗</a>
+  </div>
+  <div class="story-img"><img src="/images/mercado-central-san-jose-interior.jpg" alt="Pasillo interior del Mercado Central de San José" loading="lazy" /></div>
+</div></section>
+<section class="section" style="background:#e9dfca"><div class="wrap">
+  <span class="eyebrow">Galería</span><h2>Colores, aromas y pasillos</h2>
+  <div class="mosaic">
+    <figure><img src="/images/mercado-central-san-jose-especias.jpg" alt="Especias a la venta en el Mercado Central de San José" loading="lazy" /></figure>
+    <figure><img src="/images/mercado-central-san-jose-verduleria.jpg" alt="Puesto de frutas y verduras en el Mercado Central de San José" loading="lazy" /></figure>
+    <figure><img src="/images/mercado-central-san-jose-entrada-historica.jpg" alt="Entrada histórica del Mercado Central de San José" loading="lazy" /></figure>
+  </div>
+  <p class="photo-credit">Fotografías reales con licencia abierta. Autorías y licencias completas en “Créditos fotográficos”.</p>
+</div></section>
+<section class="section" id="visita"><div class="wrap">
+  <span class="eyebrow">Planifique su visita</span><h2>Lo esencial antes de entrar</h2>
+  <div class="grid3">
+    <article class="card info-card"><h3>🎟 Entrada / costos</h3><p>No hay boleto de entrada. Lleve colones costarricenses para compras pequeñas; algunos locales pueden aceptar otros medios de pago, pero no conviene asumirlo para todos.</p></article>
+    <article class="card info-card"><h3>🕘 Mejor momento</h3><p>La mañana entre semana permite apreciar el ritmo comercial. Si quiere comer en una soda tradicional, llegar antes del pico de almuerzo ayuda a tener una experiencia más tranquila.</p></article>
+    <article class="card info-card"><h3>🚗 Estacionamiento</h3><p>Está en pleno centro urbano. Hay estacionamientos públicos de pago en el entorno, pero la oferta y disponibilidad cambian. Para una visita turística suele ser más sencillo llegar en transporte público, taxi o aplicación de movilidad.</p></article>
+  </div>
+</div></section>
+<section class="section" id="comer" style="background:#244c34;color:white"><div class="wrap">
+  <span class="eyebrow" style="color:#f0c56d">Sabores del mercado</span><h2>Qué comer y beber alrededor de los pasillos</h2>
+  <div class="grid3">
+    <article class="card info-card" style="color:#253028"><h3>Sodas tradicionales</h3><p>Busque menús caseros con casados, arroz con pollo, sopas y olla de carne. El mercado es especialmente valioso para probar cocina cotidiana, no sólo “platos turísticos”.</p></article>
+    <article class="card info-card" style="color:#253028"><h3>Café y refrescos</h3><p>Una taza de café costarricense o un fresco de fruta funciona bien como pausa entre pasillos. Pregunte por preparaciones del día y especialidades de cada puesto.</p></article>
+    <article class="card info-card" style="color:#253028"><h3>Helado de sorbetera</h3><p>Es uno de los sabores que el propio Ministerio de Cultura menciona al describir la tradición gastronómica vinculada al Mercado Central.</p></article>
+  </div>
+  <p style="margin-top:22px">Esta guía no recibe comisiones de restaurantes ni puestos. Las menciones son categorías de experiencia, no publicidad.</p>
+</div></section>
+<section class="section" id="llegar"><div class="wrap grid2">
+  <div>
+    <span class="eyebrow">Cómo llegar</span><h2>En el centro, entre avenidas y calles históricas</h2>
+    <div class="route">
+      <article><h3>A pie</h3><p>Desde Plaza de la Cultura o el Teatro Nacional, camine hacia el oeste por el centro peatonal. El mercado se encuentra en el distrito Merced, entre calles 6 y 8.</p></article>
+      <article><h3>Autobús</h3><p>Numerosas rutas urbanas y terminales se concentran en el centro de San José. Como los recorridos cambian, confirme la parada más conveniente según su punto de origen el mismo día del viaje.</p></article>
+      <article><h3>Taxi / aplicación</h3><p>Use “Mercado Central de San José” como destino y confirme la entrada donde desea bajar. En horas de alta circulación puede ser más rápido terminar el último tramo a pie.</p></article>
+      <article><h3>En automóvil</h3><p>El centro tiene tráfico, calles de sentido único y estacionamiento limitado. Considere un parqueo público de pago y complete el trayecto caminando.</p></article>
+    </div>
+    <p><strong>Dirección de referencia:</strong> Avenida Central y Avenida 1, entre calles 6 y 8, Merced, San José. Plus Code: WWM9+R59.</p>
+    <p><strong>Teléfono de la ficha de Google:</strong> +506 2222 5981.</p>
+  </div>
+  <iframe class="map-frame" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6990.065595381938!2d-84.08457912302394!3d9.934543490167613!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8fa0e363898ff73b%3A0xd989d6c79a205b8e!2z5Lit5aSu5biC5Zy6!5e1!3m2!1ses!2scr!4v1788188009290!5m2!1ses!2scr" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Mapa del Mercado Central de San José"></iframe>
+</div></section>
+<section class="section" style="background:#efe5d1"><div class="wrap">
+  <span class="eyebrow">A pocos minutos</span><h2>Otros lugares para sumar al paseo</h2>
+  <div class="grid3">
+    <article class="card info-card"><h3>Teatro Nacional de Costa Rica</h3><p>Uno de los edificios culturales emblemáticos de la capital, junto a Plaza de la Cultura.</p></article>
+    <article class="card info-card"><h3>Museos del Banco Central</h3><p>El Museo del Oro Precolombino y otras colecciones están bajo Plaza de la Cultura.</p></article>
+    <article class="card info-card"><h3>Catedral Metropolitana</h3><p>Una parada sencilla para enlazar el mercado con el eje histórico de Parque Central y Avenida Central.</p></article>
+  </div>
+</div></section>
+<section class="section faq" id="faq"><div class="wrap" style="max-width:900px">
+  <span class="eyebrow">Preguntas frecuentes</span><h2>Antes de visitar</h2>
+  {faqItems.map(([q,a]) => <details><summary>{q}</summary><p>{a}</p></details>)}
+</div></section>
+<section class="section"><div class="wrap source-list">
+  <span class="eyebrow">Fuentes y asociación de entidad</span><h2>La guía se vincula con la entidad real, no con un nombre genérico</h2>
+  <p>Para reforzar la asociación con el lugar físico se emplean el nombre completo, distrito Merced, dirección, coordenadas 9.934543 / -84.084579, enlaces institucionales y el identificador Wikidata Q7414518.</p>
+  <ul>
+    <li><a href="https://www.msj.go.cr/servciud/merc/Paginas/mercado_central.aspx" target="_blank" rel="noopener">Municipalidad de San José — Mercado Central</a></li>
+    <li><a href="https://www.mcj.go.cr/sala-de-prensa/noticias/mejoras-en-iluminacion-gasificacion-y-seguridad-dan-la-bienvenida-los" target="_blank" rel="noopener">Ministerio de Cultura y Juventud — patrimonio del Mercado Central</a></li>
+    <li><a href="https://www.visitcostarica.com/" target="_blank" rel="noopener">Instituto Costarricense de Turismo — Visit Costa Rica</a></li>
+    <li><a href="https://www.wikidata.org/wiki/Q7414518" target="_blank" rel="noopener">Wikidata — Q7414518</a></li>
+  </ul>
+  <div class="notice"><strong>Nota sobre horarios:</strong> la ficha de Google facilitada para este proyecto indica 09:00–18:00, mientras que la Municipalidad de San José publica lunes–sábado 07:30–19:00 y domingo 08:00–18:00. Esta guía prioriza la fuente municipal y recomienda volver a comprobar feriados.</div>
+</div></section>
+</BaseLayout>
