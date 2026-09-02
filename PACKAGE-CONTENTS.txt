@@ -9,11 +9,14 @@ VALIDATION.md
 astro.config.mjs
 package.json
 pnpm-lock.yaml
+pnpm-workspace.yaml
 public/icons/apple-touch-icon.png
 public/icons/favicon-16.png
 public/icons/favicon-32.png
 public/icons/favicon.ico
 public/icons/favicon.svg
+public/icons/icon-192.png
+public/icons/icon-512.png
 public/icons/logo.svg
 public/images/README-REAL-PHOTOS.txt
 public/images/mercado-central-san-jose-condimentos.jpg
@@ -22,7 +25,11 @@ public/images/mercado-central-san-jose-especias.jpg
 public/images/mercado-central-san-jose-fachada.jpg
 public/images/mercado-central-san-jose-interior.jpg
 public/images/mercado-central-san-jose-verduleria.jpg
+public/manifest.webmanifest
 public/robots.txt
+public/sw.js
+src/components/WeatherSection.astro
+src/layouts/BaseLayout.astro
 scripts/audit-language.mjs
 scripts/audit-source.mjs
 scripts/verify-build.mjs

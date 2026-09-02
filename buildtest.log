@@ -1,0 +1,28 @@
+[WARN] Unsupported engine: wanted: {"node":"24.20.0"} (current: {"node":"v24.14.0","pnpm":"11.24.0"})
+$ astro build && node scripts/verify-build.mjs
+[2m16:24:13[22m [34m[types][39m Generated [2m154ms[22m
+[2m16:24:13[22m [34m[build][39m output: [34m"static"[39m
+[2m16:24:13[22m [34m[build][39m mode: [34m"static"[39m
+[2m16:24:13[22m [34m[build][39m directory: [34mC:\Users\Administrator\Documents\GitHub\sanjosecentralmarket\dist\[39m
+[2m16:24:13[22m [34m[build][39m Collecting build info...
+[2m16:24:13[22m [34m[build][39m [32m✓ Completed in 267ms.[39m
+[2m16:24:13[22m [34m[build][39m Building static entrypoints...
+[2m16:24:15[22m [34m[vite][39m [32m✓ built in 1.41s[39m
+[2m16:24:15[22m [34m[vite][39m [32m✓ built in 142ms[39m
+[2m16:24:15[22m [34m[build][39m Rearranging server assets...
+
+[42m[30m generating static routes [39m[49m
+[2m16:24:15[22m   [34m├─[39m [2m/404.html[22m [2m(+47ms)[22m 
+[2m16:24:15[22m   [34m├─[39m [2m/configuracion-de-cookies/index.html[22m [2m(+10ms)[22m 
+[2m16:24:15[22m   [34m├─[39m [2m/creditos-fotograficos/index.html[22m [2m(+10ms)[22m 
+[2m16:24:15[22m   [34m├─[39m [2m/privacidad/index.html[22m [2m(+10ms)[22m 
+[2m16:24:15[22m   [34m├─[39m [2m/terminos/index.html[22m [2m(+6ms)[22m 
+[2m16:24:15[22m   [34m├─[39m [2m/index.html[22m [2m(+7ms)[22m 
+[2m16:24:15[22m [32m✓ Completed in 139ms.
+[39m
+[2m16:24:15[22m [34m[build][39m [32m✓ Completed in 1.80s.[39m
+[2m16:24:15[22m [34m[@astrojs/sitemap][39m `sitemap-index.xml` created at `dist`
+[2m16:24:15[22m [34m[build][39m 6 page(s) built in [1m2.12s[22m
+[2m16:24:15[22m [34m[build][39m [1mComplete![22m
+Verificación: Sitemap: 1 archivo(s), 5 URL(s), 0 con lastmod.
+Build verification OK (6 HTML revisados).

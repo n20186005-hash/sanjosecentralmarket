@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import WeatherSection from '../components/WeatherSection.astro';
 const site = Astro.site;
 const pageUrl = site ? new URL('/', site).toString() : undefined;
 const imageUrl = site ? new URL('/images/mercado-central-san-jose-fachada.jpg', site).toString() : undefined;
@@ -12,12 +13,13 @@ const sameAs = [
 ];
 const placeSchema = {
   '@context':'https://schema.org', '@type':['TouristAttraction','LocalBusiness'], '@id':placeId,
-  name:'Mercado Central de San José', alternateName:'Mercado Central',
+  name:'Mercado Central de San José', alternateName:['Mercado Central','San José Central Market'],
   description:'Mercado histórico de San José fundado en 1880, con pasillos de alimentos, café, comidas tradicionales, hierbas, artesanías y comercio local.',
   ...(pageUrl ? {url:pageUrl} : {}), ...(imageUrl ? {image:[imageUrl]} : {}),
   telephone:'+506 2222 5981', priceRange:'₡',
   address:{'@type':'PostalAddress',streetAddress:'Avenida Central y Avenida 1, entre calles 6 y 8',addressLocality:'San José',addressRegion:'San José',addressCountry:'CR'},
   geo:{'@type':'GeoCoordinates',latitude:9.934543490167613,longitude:-84.08457912302394},
+  hasMap:'https://maps.app.goo.gl/DFX6n41sMX3djrEA6',
   openingHoursSpecification:[
     {'@type':'OpeningHoursSpecification',dayOfWeek:['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],opens:'07:30',closes:'19:00'},
     {'@type':'OpeningHoursSpecification',dayOfWeek:'Sunday',opens:'08:00',closes:'18:00'}
@@ -31,13 +33,15 @@ const faqItems = [
   ['¿Cuál es el mejor momento para ir?','La mañana entre semana suele ser una buena opción para observar la actividad comercial. Los periodos de almuerzo y los sábados pueden sentirse más concurridos.'],
   ['¿El mercado es accesible?','La Municipalidad de San José indica que el Mercado Central cuenta con instalaciones accesibles para personas con movilidad reducida.'],
   ['¿Qué se puede comprar?','Hay productos frescos, carnes y pescados, café, especias, hierbas, artículos de cuero, recuerdos, artesanías y otros productos tradicionales.'],
-  ['¿Los horarios pueden cambiar?','Sí. Feriados, celebraciones y decisiones operativas pueden alterar el horario. Conviene comprobar la información municipal antes de una visita importante.']
+  ['¿Los horarios pueden cambiar?','Sí. Feriados, celebraciones y decisiones operativas pueden alterar el horario. Conviene comprobar la información municipal antes de una visita importante.'],
+  ['¿Hay baños públicos en el mercado?','El mercado cuenta con servicios sanitarios en su interior, de uso compartido. Para la visita conviene llevar papel higiénico propio y dinero en efectivo de baja denominación por si algún servicio cobra una pequeña tarifa de uso.'],
+  ['¿Hay opciones de comida y alojamiento cerca?','Alrededor del mercado conviven sodas, restaurantes, cafeterías y puestos de comida, así como hoteles, hostales y alojamientos de distintas categorías en el centro de San José. Esta guía no recomienda establecimientos concretos; consulte reseñas y verifique las condiciones antes de elegir.']
 ];
 const faqSchema={'@context':'https://schema.org','@type':'FAQPage',mainEntity:faqItems.map(([q,a])=>({'@type':'Question',name:q,acceptedAnswer:{'@type':'Answer',text:a}}))};
 ---
 <BaseLayout title="Mercado Central de San José | Guía de visita, comida, historia y cómo llegar" description="Guía independiente del Mercado Central de San José, Costa Rica: historia, horarios, entrada, comida tradicional, transporte, estacionamiento, mapa y consejos de visita.">
-<script type="application/ld+json" set:html={JSON.stringify(placeSchema)}></script>
-<script type="application/ld+json" set:html={JSON.stringify(faqSchema)}></script>
+<script type="application/ld+json" is:inline set:html={JSON.stringify(placeSchema)}></script>
+<script type="application/ld+json" is:inline set:html={JSON.stringify(faqSchema)}></script>
 <section class="hero">
   <img src="/images/mercado-central-san-jose-fachada.jpg" alt="Fachada del Mercado Central de San José, Costa Rica" width="1600" height="900" fetchpriority="high" />
   <div class="wrap hero-content">
@@ -61,6 +65,7 @@ const faqSchema={'@context':'https://schema.org','@type':'FAQPage',mainEntity:fa
     <span class="eyebrow">Patrimonio cotidiano</span><h2>Un mercado que también cuenta la historia de San José</h2>
     <p>La Municipalidad de San José identifica al Mercado Central como el mayor mercado de la ciudad y señala que fue fundado en 1880. Su importancia no se limita al comercio: el Ministerio de Cultura y Juventud lo describe como un espacio de transmisión de cocina, herbolaria, artesanía, formas de trato y otras expresiones de la cultura popular costarricense.</p>
     <p>El conjunto actual conserva huellas de varias etapas arquitectónicas. Un terremoto afectó el edificio original en 1888 y, décadas después, se reconstruyeron sectores con nuevos materiales y lenguaje modernista.</p>
+    <p>Su historia se entrelaza con la de la capital: mientras San José se consolidaba como centro político y comercial del país, el mercado se convirtió en el punto donde el campo entrega sus productos a la ciudad. Esa función de «puente» entre lo rural y lo urbano se sigue leyendo en la variedad de puestos, en las recetas de las sodas y en los oficios que los pasillos mantienen vivos.</p>
     <p class="quote">Aquí la visita no consiste en “ver” un monumento: consiste en entrar en una ciudad dentro de la ciudad.</p>
     <a class="btn" href="https://www.msj.go.cr/servciud/merc/Paginas/mercado_central.aspx" target="_blank" rel="noopener">Fuente municipal ↗</a>
   </div>
@@ -83,6 +88,7 @@ const faqSchema={'@context':'https://schema.org','@type':'FAQPage',mainEntity:fa
     <article class="card info-card"><h3>🚗 Estacionamiento</h3><p>Está en pleno centro urbano. Hay estacionamientos públicos de pago en el entorno, pero la oferta y disponibilidad cambian. Para una visita turística suele ser más sencillo llegar en transporte público, taxi o aplicación de movilidad.</p></article>
   </div>
 </div></section>
+<WeatherSection />
 <section class="section" id="comer" style="background:#244c34;color:white"><div class="wrap">
   <span class="eyebrow" style="color:#f0c56d">Sabores del mercado</span><h2>Qué comer y beber alrededor de los pasillos</h2>
   <div class="grid3">
@@ -91,6 +97,19 @@ const faqSchema={'@context':'https://schema.org','@type':'FAQPage',mainEntity:fa
     <article class="card info-card" style="color:#253028"><h3>Helado de sorbetera</h3><p>Es uno de los sabores que el propio Ministerio de Cultura menciona al describir la tradición gastronómica vinculada al Mercado Central.</p></article>
   </div>
   <p style="margin-top:22px">Esta guía no recibe comisiones de restaurantes ni puestos. Las menciones son categorías de experiencia, no publicidad.</p>
+</div></section>
+<section class="section" id="historias" style="background:#e9f0e5"><div class="wrap">
+  <span class="eyebrow">Cultura viva</span><h2>Historias y saberes que habitan los pasillos</h2>
+  <p style="max-width:880px">Más que un sitio para comprar, el Mercado Central es un espacio donde se transmiten oficios, recetas y modos de vida. La Municipalidad de San José y el Ministerio de Cultura y Juventud describen precisamente esa transmisión —de cocina, herbolaria, artesanía y formas de trato— como parte de su valor patrimonial.</p>
+  <div class="grid3">
+    <article class="card info-card"><span class="kind">Tradición gastronómica</span><h3>La soda y el casado del día</h3><p>Dentro de los pasillos, las sodas preparan a la vista platos de la cocina cotidiana: casados, arroz con pollo, sopas y olla de carne. Son espacios donde la receta y el precio responden al público que trabaja en el centro, no a un menú pensado solo para turistas.</p></article>
+    <article class="card info-card"><span class="kind">Saberes tradicionales</span><h3>El pasillo de las hierbas</h3><p>La venta de hierbas y plantas medicinales que el Ministerio de Cultura menciona al describir el mercado no es un adorno: conecta la ciudad con una herbolaria que llega del campo y de tradiciones familiares. Si no las conoce, pregunte por sus usos; la información no sustituye la consulta médica.</p></article>
+    <article class="card info-card"><span class="kind">Tradición</span><h3>El helado de sorbetera</h3><p>El sorbete helado hecho en sorbetera es uno de los sabores que la propia entidad cultural destaca al hablar de la gastronomía ligada al mercado. Refrescos de frutas y helados de métodos tradicionales convierten un simple antojo en una experiencia que pasa de generación en generación.</p></article>
+    <article class="card info-card"><span class="kind">Historia</span><h3>Ocho años después: el terremoto de 1888</h3><p>El mercado se fundó en 1880 y, apenas ocho años después, un terremoto dañó el edificio original. La reconstrucción se hizo por etapas y, con el tiempo, llegaron nuevos materiales y un lenguaje modernista; por eso hoy conviven en el conjunto distintas huellas arquitectónicas.</p></article>
+    <article class="card info-card"><span class="kind">Vida de barrio</span><h3>Del campo a la ciudad, cada mañana</h3><p>Frutas, verduras, carnes, granos y especias llegan desde distintas regiones para abastecer los puestos del centro. Quien visita temprano entre semana puede asomarse a ese momento de descarga y acomodo, cuando el mercado «despierta» antes que el resto de la ciudad.</p></article>
+    <article class="card info-card"><span class="kind">Vida de barrio</span><h3>Puestos que atraviesan generaciones</h3><p>No es raro encontrar comercios que han pasado de padres a hijos y conservan especialidades que apenas cambian: el mismo tipo de cuchillos, especias, dulces o artículos de cuero que ya se ofrecía décadas atrás. Detrás de cada puesto hay una historia familiar y un oficio que el mercado ayuda a preservar.</p></article>
+  </div>
+  <p class="muted svc-note">Estas historias combinan información de fuentes oficiales (Municipalidad de San José y Ministerio de Cultura y Juventud) con observaciones generales sobre la vida del mercado. Las referencias son de tipo y nunca sustituyen una visita guiada por las propias personas del lugar.</p>
 </div></section>
 <section class="section" id="llegar"><div class="wrap grid2">
   <div>
@@ -103,8 +122,22 @@ const faqSchema={'@context':'https://schema.org','@type':'FAQPage',mainEntity:fa
     </div>
     <p><strong>Dirección de referencia:</strong> Avenida Central y Avenida 1, entre calles 6 y 8, Merced, San José. Plus Code: WWM9+R59.</p>
     <p><strong>Teléfono de la ficha de Google:</strong> +506 2222 5981.</p>
+    <p><strong>Fuente oficial:</strong> la información del mercado se publica en la página de la <a href="https://www.msj.go.cr/servciud/merc/Paginas/mercado_central.aspx" target="_blank" rel="noopener">Municipalidad de San José</a>; para turismo nacional y regional, el portal <a href="https://www.visitcostarica.com/" target="_blank" rel="noopener">Visit Costa Rica</a> del Instituto Costarricense de Turismo.</p>
   </div>
-  <iframe class="map-frame" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6990.065595381938!2d-84.08457912302394!3d9.934543490167613!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8fa0e363898ff73b%3A0xd989d6c79a205b8e!2z5Lit5aSu5biC5Zy6!5e1!3m2!1ses!2scr!4v1788188009290!5m2!1ses!2scr" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Mapa del Mercado Central de San José"></iframe>
+  <iframe class="map-frame" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6990.065595381938!2d-84.08457912302394!3d9.934543490167613!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8fa0e363898ff73b%3A0xd989d6c79a205b8e!2z5Lit5aSu5biC5Zy6!5e1!3m2!1szh-CN!2s!4v1788188009290!5m2!1szh-CN!2s" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Mapa del Mercado Central de San José"></iframe>
+</div></section>
+<section class="section" id="servicios" style="background:#e9dfca"><div class="wrap">
+  <span class="eyebrow">Servicios y comodidades</span><h2>Lo que puede necesitar alrededor del mercado</h2>
+  <p style="max-width:880px">La visita se disfruta más sabiendo dónde encontrar lo básico. Esta sección describe los <strong>tipos de servicio</strong> disponibles dentro y en los alrededores del cuadrante, sin recomendar establecimientos concretos.</p>
+  <div class="grid3">
+    <article class="card info-card"><h3>🚻 Baños públicos</h3><p>El mercado cuenta con servicios sanitarios en su interior, de uso compartido. Conviene llevar papel higiénico propio y dinero en efectivo de baja denominación, ya que algunos servicios pueden cobrar una pequeña tarifa de uso.</p></article>
+    <article class="card info-card"><h3>🅿️ Estacionamiento</h3><p>Se encuentran varios parqueos públicos de pago en el cuadrante, con tarifa por hora o fracción, y los espacios libres en vía son escasos. Las calles del centro son estrechas y muchas de sentido único: deje tiempo para maniobrar o combine el automóvil con un corto trayecto a pie.</p></article>
+    <article class="card info-card"><h3>🍽️ Comida cerca del mercado</h3><p>Sodas, restaurantes y cafeterías rodean el cuadrante, junto a los puestos de comida del propio edificio. Hay desde opciones rápidas hasta comedores de cocina costarricense; compruebe horarios, porque varios locales reducen su servicio al caer la tarde.</p></article>
+    <article class="card info-card"><h3>🛏️ Alojamiento</h3><p>El centro de San José concentra hoteles, hostales y otras opciones de alojamiento a distancias caminables o en trayectos cortos de transporte. Si se hospeda fuera del centro, verifique el horario del transporte público para volver después de la visita.</p></article>
+    <article class="card info-card"><h3>🛒 Compras de conveniencia</h3><p>Supermercados, pulperías, farmacias y cajeros automáticos se encuentran en las calles vecinas. El propio mercado sirve además de abastecedor de frutas, verduras, carnes, granos y especias, muy útil si cocina durante su estadía.</p></article>
+    <article class="card info-card"><h3>⛽ Combustible y carga</h3><p>Dentro del cuadrante del mercado no hay estación de servicio, así que si viaja en automóvil conviene llegar con el tanque surtido. Para vehículos eléctricos, la oferta pública de carga en el centro es reducida: confirme puntos en su aplicación según la ruta.</p></article>
+  </div>
+  <div class="notice svc-note"><strong>Nota editorial:</strong> este proyecto es una guía sin fines de lucro y no recibe comisiones de comercios. Las referencias describen tipos de servicio disponibles en el área; tarifas, horarios y disponibilidad cambian, por lo que conviene confirmarlos en el lugar antes de la visita.</div>
 </div></section>
 <section class="section" style="background:#efe5d1"><div class="wrap">
   <span class="eyebrow">A pocos minutos</span><h2>Otros lugares para sumar al paseo</h2>

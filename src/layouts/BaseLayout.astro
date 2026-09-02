@@ -5,6 +5,16 @@ const { title, description, image='/images/mercado-central-san-jose-fachada.jpg'
 const site = Astro.site;
 const canonical = site ? new URL(Astro.url.pathname, site).toString() : undefined;
 const ogImage = site ? new URL(image, site).toString() : undefined;
+const logoUrl = site ? new URL('/icons/logo.svg', site).toString() : undefined;
+const orgSchema = site ? {
+  "@context":"https://schema.org","@graph":[
+    {"@type":"WebSite","@id":site.toString()+"#website","url":site.toString(),"name":"Guía del Mercado Central de San José","description":description,"inLanguage":"es-CR","publisher":{"@id":site.toString()+"#organization"}},
+    {"@type":"Organization","@id":site.toString()+"#organization","name":"Guía del Mercado Central de San José","url":site.toString(),"logo":logoUrl?{"@type":"ImageObject","url":logoUrl}:undefined}
+  ]
+} : null;
+const webPageSchema = site && canonical ? {
+  "@context":"https://schema.org","@type":"WebPage","@id":canonical+"#webpage","url":canonical,"name":title,"description":description,"inLanguage":"es-CR","isPartOf":{"@id":site.toString()+"#website"},"dateModified":"2026-09-02"
+} : null;
 ---
 <!doctype html>
 <html lang="es-CR">
@@ -21,18 +31,22 @@ const ogImage = site ? new URL(image, site).toString() : undefined;
   <meta property="og:locale" content="es_CR" />
   {canonical && <meta property="og:url" content={canonical} />}
   {ogImage && <meta property="og:image" content={ogImage} />}
+  {ogImage && <meta property="og:image:alt" content="Mercado Central de San José – San José, Costa Rica" />}
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg" />
   <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  {orgSchema && <script type="application/ld+json" is:inline set:html={JSON.stringify(orgSchema)}></script>}
+  {webPageSchema && <script type="application/ld+json" is:inline set:html={JSON.stringify(webPageSchema)}></script>}
 </head>
 <body>
 <header class="site-header">
   <div class="wrap nav">
     <a class="brand" href="/"><img src="/icons/logo.svg" alt="Logo Guía Mercado Central" /><span>Mercado Central<br/><small>San José</small></span></a>
     <nav class="nav-links" aria-label="Navegación principal">
-      <a href="/#historia">Historia</a><a href="/#visita">Planifique</a><a href="/#comer">Dónde comer</a><a href="/#llegar">Cómo llegar</a><a href="/#faq">FAQ</a>
+      <a href="/#historia">Historia</a><a href="/#historias">Tradiciones</a><a href="/#visita">Planifique</a><a href="/#comer">Dónde comer</a><a href="/#servicios">Servicios</a><a href="/#llegar">Cómo llegar</a><a href="/#faq">FAQ</a>
     </nav>
   </div>
 </header>
@@ -64,6 +78,9 @@ const ogImage = site ? new URL(image, site).toString() : undefined;
   try{const p=JSON.parse(localStorage.getItem(key)||'{}'); if(p.analytics===true) loadGA();}catch(e){}
   window.__mcLoadGA=loadGA;
 })();
+</script>
+<script is:inline>
+if('serviceWorker' in navigator){ window.addEventListener('load',function(){ navigator.serviceWorker.register('/sw.js').catch(function(){}); }); }
 </script>
 </body>
 </html>

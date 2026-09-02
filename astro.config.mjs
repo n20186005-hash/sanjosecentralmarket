@@ -2,8 +2,8 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 
-// Configure el dominio público ÚNICAMENTE aquí cuando esté disponible.
-const SITE = '';
+// Dominio público real del sitio.
+const SITE = 'https://sanjosecentralmarket.com';
 
 export default defineConfig({
   site: SITE || undefined,
