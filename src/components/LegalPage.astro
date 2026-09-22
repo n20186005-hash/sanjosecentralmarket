@@ -1,0 +1,56 @@
+---
+import { t, type Locale } from '../i18n';
+type Kind = 'privacidad' | 'terminos' | 'cookies' | 'creditos';
+interface Props { locale?: Locale; kind: Kind; }
+const { locale = 'es', kind } = Astro.props;
+const U = t(locale);
+const L = U.legal[kind];
+const C = U.cookieAlways;
+const ON = U.cookieOn;
+const OFF = U.cookieOff;
+---
+<section class="legal-page"><div class="wrap" style="max-width:820px">
+<span class="eyebrow">{L.eyebrow}</span><h1>{L.h1}</h1><p><strong>{L.updated}</strong></p>
+{kind === 'creditos' && (
+  <p set:html={L.intro}></p>
+)}
+{kind === 'creditos' && (
+  <ol>
+    {L.items.map((it) => <li><strong>{it.strong}</strong>{it.rest}</li>)}
+  </ol>
+)}
+{kind === 'creditos' && <p>{L.note}</p>}
+
+{kind === 'cookies' && <p>{L.intro}</p>}
+{kind === 'cookies' && (
+  <div class="cookie-rows">
+    {L.rows.map((r) => (
+      <div class="cookie-row">
+        <div><strong>{r.title}</strong><p class="muted">{r.desc}</p></div>
+        {r.always
+          ? <button class="switch" aria-pressed="true" disabled>{C}</button>
+          : <button id={r.key} class="switch" aria-pressed="false">{OFF}</button>}
+      </div>
+    ))}
+    <div class="cookie-actions"><button id="save" class="btn btn-solid">{L.saveLabel}</button><button id="reject" class="btn">{L.rejectLabel}</button></div>
+    <p id="status" class="notice" style="display:none" role="status"></p>
+  </div>
+)}
+
+{(kind === 'privacidad' || kind === 'terminos') && L.sections.map((s) => (
+  <><h2>{s.h}</h2><p>{s.p}</p></>
+))}
+</div></section>
+
+{kind === 'cookies' && (
+<script is:inline define:vars={{ ON, OFF, savedMsg: L.savedMsg, rejectedMsg: L.rejectedMsg }}>
+const key='mc-sj-cookie-preferences';
+const a=document.getElementById('analytics'), p=document.getElementById('preferences'), status=document.getElementById('status');
+function set(btn,v){btn.setAttribute('aria-pressed',String(v));btn.textContent=v?ON:OFF;}
+try{const cur=JSON.parse(localStorage.getItem(key)||'{}');set(a,cur.analytics===true);set(p,cur.preferences!==false);}catch(e){}
+if(a)a.onclick=()=>set(a,a.getAttribute('aria-pressed')!=='true');
+if(p)p.onclick=()=>set(p,p.getAttribute('aria-pressed')!=='true');
+const save=document.getElementById('save'); if(save)save.onclick=()=>{const data={analytics:a.getAttribute('aria-pressed')==='true',preferences:p.getAttribute('aria-pressed')==='true'};localStorage.setItem(key,JSON.stringify(data));if(data.analytics&&window.__mcLoadGA)window.__mcLoadGA();status.style.display='block';status.textContent=savedMsg;};
+const reject=document.getElementById('reject'); if(reject)reject.onclick=()=>{set(a,false);set(p,false);localStorage.setItem(key,JSON.stringify({analytics:false,preferences:false}));status.style.display='block';status.textContent=rejectedMsg;};
+</script>
+)}

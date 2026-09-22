@@ -1,0 +1,11 @@
+---
+import { t, localizedPath, type Locale } from '../i18n';
+interface Props { locale?: Locale; }
+const { locale = 'es' } = Astro.props;
+const N = t(locale).legal.notFound;
+---
+<section class="legal-page"><div class="wrap">
+  <span class="eyebrow">{N.eyebrow}</span><h1>{N.h1}</h1>
+  <p>{N.p}</p>
+  <a class="btn btn-solid" href={localizedPath('', locale)}>{N.backLabel}</a>
+</div></section>

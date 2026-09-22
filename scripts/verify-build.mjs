@@ -26,7 +26,13 @@ const expectedPages = [
   'privacidad/index.html',
   'terminos/index.html',
   'configuracion-de-cookies/index.html',
-  'creditos-fotograficos/index.html'
+  'creditos-fotograficos/index.html',
+  'en/index.html',
+  'en/404/index.html',
+  'en/privacidad/index.html',
+  'en/terminos/index.html',
+  'en/configuracion-de-cookies/index.html',
+  'en/creditos-fotograficos/index.html'
 ];
 const htmlFiles = [];
 (function walk(d) {

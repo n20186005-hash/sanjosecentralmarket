@@ -1,0 +1,123 @@
+---
+import StatusBanner from './StatusBanner.astro';
+import WeatherSection from './WeatherSection.astro';
+import { t, faqItems, localizedPath, type Locale } from '../i18n';
+import { SITE_FACTS } from '../data/site';
+import { placeSchema, faqSchema } from '../lib/schema';
+interface Props { locale?: Locale; }
+const { locale = 'es' } = Astro.props;
+const U = t(locale);
+const H = U.home;
+const F = U.home.faq;
+const items = faqItems(locale);
+
+const site = Astro.site;
+const pageUrl = site ? new URL(localizedPath('', locale), site).toString() : undefined;
+const place = site ? placeSchema(site, locale) : null;
+const faq = faqSchema(locale);
+
+const heroAlt = locale === 'en' ? 'Facade of the Central Market of San José, Costa Rica' : 'Fachada del Mercado Central de San José, Costa Rica';
+const srcLinks = {
+  municipality: SITE_FACTS.sameAs[0],
+  culture: SITE_FACTS.sameAs[1],
+  ict: 'https://www.visitcostarica.com/',
+  wikidata: SITE_FACTS.sameAs[2]
+};
+---
+<StatusBanner locale={locale} />
+<section class="hero">
+  <img src="/images/mercado-central-san-jose-fachada.jpg" alt={heroAlt} width="1600" height="900" fetchpriority="high" />
+  <div class="wrap hero-content">
+    <span class="eyebrow" style="color:#f6cc71">{H.hero.eyebrow}</span>
+    <h1>{H.hero.h1a}<br/>{H.hero.h1b}</h1>
+    <p>{H.hero.subtitle}</p>
+    <div class="pill-row">{H.hero.pills.map((p) => <span class="pill">{p}</span>)}</div>
+  </div>
+</section>
+<div class="market-strip"><div class="wrap">{H.marketStrip}</div></div>
+<section class="section"><div class="wrap">
+  <div class="facts">
+    {H.facts.map((f) => <div class="fact"><span class="eyebrow">{f.eyebrow}</span><b>{f.b}</b><span class="muted">{f.muted}</span></div>)}
+  </div>
+</div></section>
+<section class="section" id="historia"><div class="wrap story">
+  <div>
+    <span class="eyebrow">{H.historia.eyebrow}</span><h2>{H.historia.h2}</h2>
+    {H.historia.ps.map((p) => <p>{p}</p>)}
+    <p class="quote">{H.historia.quote}</p>
+    <a class="btn" href={srcLinks.municipality} target="_blank" rel="noopener">{H.historia.sourceLabel}</a>
+  </div>
+  <div class="story-img"><img src="/images/mercado-central-san-jose-interior.jpg" alt={H.historia.imgAlt} loading="lazy" /></div>
+</div></section>
+<section class="section" style="background:#e9dfca"><div class="wrap">
+  <span class="eyebrow">{H.gallery.eyebrow}</span><h2>{H.gallery.h2}</h2>
+  <div class="mosaic">
+    {H.gallery.imgs.map((im) => <figure><img src={im.src} alt={im.alt} loading="lazy" /></figure>)}
+  </div>
+  <p class="photo-credit">{H.gallery.credit}</p>
+</div></section>
+<section class="section" id="visita"><div class="wrap">
+  <span class="eyebrow">{H.visita.eyebrow}</span><h2>{H.visita.h2}</h2>
+  <div class="grid3">
+    {H.visita.cards.map((c) => <article class="card info-card"><h3>{c.h3}</h3><p>{c.p}</p></article>)}
+  </div>
+</div></section>
+<WeatherSection locale={locale} />
+<section class="section" id="comer" style="background:#244c34;color:white"><div class="wrap">
+  <span class="eyebrow" style="color:#f0c56d">{H.comer.eyebrow}</span><h2>{H.comer.h2}</h2>
+  <div class="grid3">
+    {H.comer.cards.map((c) => <article class="card info-card" style="color:#253028"><h3>{c.h3}</h3><p>{c.p}</p></article>)}
+  </div>
+  <p style="margin-top:22px">{H.comer.note}</p>
+</div></section>
+<section class="section" id="historias" style="background:#e9f0e5"><div class="wrap">
+  <span class="eyebrow">{H.historias.eyebrow}</span><h2>{H.historias.h2}</h2>
+  <p style="max-width:880px">{H.historias.intro}</p>
+  <div class="grid3">
+    {H.historias.cards.map((c) => <article class="card info-card"><span class="kind">{c.kind}</span><h3>{c.h3}</h3><p>{c.p}</p></article>)}
+  </div>
+  <p class="muted svc-note">{H.historias.note}</p>
+</div></section>
+<section class="section" id="llegar"><div class="wrap grid2">
+  <div>
+    <span class="eyebrow">{H.llegar.eyebrow}</span><h2>{H.llegar.h2}</h2>
+    <div class="route">
+      {H.llegar.routes.map((r) => <article><h3>{r.h3}</h3><p>{r.p}</p></article>)}
+    </div>
+    <p><strong>{H.llegar.address}</strong></p>
+    <p><strong>{H.llegar.phone}</strong></p>
+    <p><strong>{H.llegar.sourceIntro}</strong> <a href={srcLinks.municipality} target="_blank" rel="noopener">{H.llegar.sourceMunicipality}</a>; para turismo nacional y regional, el portal <a href={srcLinks.ict} target="_blank" rel="noopener">{H.llegar.sourceIct}</a>.</p>
+  </div>
+  <iframe class="map-frame" src={SITE_FACTS.mapEmbed} allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title={H.llegar.mapTitle}></iframe>
+</div></section>
+<section class="section" id="servicios" style="background:#e9dfca"><div class="wrap">
+  <span class="eyebrow">{H.servicios.eyebrow}</span><h2>{H.servicios.h2}</h2>
+  <p style="max-width:880px" set:html={H.servicios.intro}></p>
+  <div class="grid3">
+    {H.servicios.cards.map((c) => <article class="card info-card"><h3>{c.h3}</h3><p>{c.p}</p></article>)}
+  </div>
+  <div class="notice svc-note">{H.servicios.notice}</div>
+</div></section>
+<section class="section" style="background:#efe5d1"><div class="wrap">
+  <span class="eyebrow">{H.cerca.eyebrow}</span><h2>{H.cerca.h2}</h2>
+  <div class="grid3">
+    {H.cerca.cards.map((c) => <article class="card info-card"><h3>{c.h3}</h3><p>{c.p}</p></article>)}
+  </div>
+</div></section>
+<section class="section faq" id="faq"><div class="wrap" style="max-width:900px">
+  <span class="eyebrow">{F.eyebrow}</span><h2>{F.h2}</h2>
+  {items.map(([q, a]) => <details><summary>{q}</summary><p>{a}</p></details>)}
+</div></section>
+<section class="section"><div class="wrap source-list">
+  <span class="eyebrow">{H.fuentes.eyebrow}</span><h2>{H.fuentes.h2}</h2>
+  <p>{H.fuentes.p}</p>
+  <ul>
+    <li><a href={srcLinks.municipality} target="_blank" rel="noopener">{H.fuentes.sourceLabels.municipality}</a></li>
+    <li><a href={srcLinks.culture} target="_blank" rel="noopener">{H.fuentes.sourceLabels.culture}</a></li>
+    <li><a href={srcLinks.ict} target="_blank" rel="noopener">{H.fuentes.sourceLabels.ict}</a></li>
+    <li><a href={srcLinks.wikidata} target="_blank" rel="noopener">{H.fuentes.sourceLabels.wikidata}</a></li>
+  </ul>
+  <div class="notice">{H.fuentes.note}</div>
+</div></section>
+{place && <script type="application/ld+json" is:inline set:html={JSON.stringify(place)}></script>}
+{faq && <script type="application/ld+json" is:inline set:html={JSON.stringify(faq)}></script>}

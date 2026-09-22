@@ -1,20 +1,50 @@
 ---
-// WeatherSection.astro — Clima en vivo y pronóstico para el Mercado Central de San José.
-// Proyecto Astro estático (sin runtime de servidor): los datos se obtienen en el navegador
-// desde la API pública y gratuita de Open-Meteo (CORS abierto, sin clave, sin cookies) y se
-// cachean localmente por 10 minutos para evitar llamadas repetidas.
+import type { Locale } from '../i18n';
+interface Props { locale?: Locale; }
+const { locale = 'es' } = Astro.props;
 const WEATHER_LINK = 'https://www.imn.ac.cr';
+const w = locale === 'en' ? {
+  eyebrow: 'Live weather',
+  h2: 'Weather for your visit',
+  intro: 'San José combines a mountain climate with a dry season (December–April) and a well-marked rainy season (May–November). The forecast shown here is obtained in real time from the public, free Open-Meteo API, with no keys and no tracking; for the country’s official forecast consult the National Meteorological Institute (IMN).',
+  sourceNote: 'Data source: ',
+  imn: 'National Meteorological Institute',
+  loading: 'Loading current data…',
+  loadingFc: 'Loading forecast…',
+  fail: 'The forecast could not be loaded right now. Try again or consult the official forecast of the ',
+  retry: 'Retry',
+  updated: 'Updated at ',
+  forecastHeading: 'Forecast for the next few days',
+  today: 'Today',
+  days: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+  feels: 'Feels like', humidity: 'Humidity', wind: 'Wind', precip: 'Precip'
+} : {
+  eyebrow: 'Clima en vivo',
+  h2: 'El tiempo para su visita',
+  intro: 'San José combina un clima de montaña con una estación seca (diciembre–abril) y una lluviosa bien marcada (mayo–noviembre). El pronóstico que ve aquí se obtiene en tiempo real de la API pública y gratuita de Open-Meteo, sin claves ni rastreo; para el pronóstico oficial del país consulte al Instituto Meteorológico Nacional (IMN).',
+  sourceNote: 'Fuente de datos: ',
+  imn: 'Instituto Meteorológico Nacional',
+  loading: 'Cargando datos actuales…',
+  loadingFc: 'Cargando pronóstico…',
+  fail: 'No se pudo cargar el pronóstico en este momento. Pruebe de nuevo o consulte el pronóstico oficial del ',
+  retry: 'Reintentar',
+  updated: 'Actualizado a las ',
+  forecastHeading: 'Pronóstico para los próximos días',
+  today: 'Hoy',
+  days: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+  feels: 'Sensación térmica', humidity: 'Humedad', wind: 'Viento', precip: 'Precipitación'
+};
 ---
 <section class="section" id="tiempo" style="background:#efe5d1"><div class="wrap">
-  <span class="eyebrow">Clima en vivo</span><h2>El tiempo para su visita</h2>
-  <p style="max-width:880px">San José combina un clima de montaña con una estación seca (diciembre–abril) y una lluviosa bien marcada (mayo–noviembre). El pronóstico que ve aquí se obtiene en tiempo real de la API pública de Open-Meteo, sin claves ni rastreo; para el pronóstico oficial del país consulte al Instituto Meteorológico Nacional (IMN).</p>
+  <span class="eyebrow">{w.eyebrow}</span><h2>{w.h2}</h2>
+  <p style="max-width:880px">{w.intro}</p>
   <div class="weather-grid">
-    <div class="weather-now card"><div id="wt-now" aria-live="polite"><p class="muted">Cargando datos actuales…</p></div></div>
-    <div class="wt-fc card"><div id="wt-fc" aria-live="polite"><p class="muted">Cargando pronóstico…</p></div></div>
+    <div class="weather-now card"><div id="wt-now" aria-live="polite"><p class="muted">{w.loading}</p></div></div>
+    <div class="wt-fc card"><div id="wt-fc" aria-live="polite"><p class="muted">{w.loadingFc}</p></div></div>
   </div>
-  <p class="muted svc-note">Fuente de datos: <a href="https://open-meteo.com" target="_blank" rel="noopener" style="color:var(--green);font-weight:800">Open-Meteo</a> — servicio gratuito, sin clave API y sin cookies. Las condiciones pueden cambiar con rapidez; para decisiones importantes consulte el pronóstico oficial del <a href={WEATHER_LINK} target="_blank" rel="noopener" style="color:var(--green);font-weight:800">Instituto Meteorológico Nacional</a>.</p>
+  <p class="muted svc-note">{w.sourceNote}<a href="https://open-meteo.com" target="_blank" rel="noopener" style="color:var(--green);font-weight:800">Open-Meteo</a> — {locale === 'en' ? 'free service, no API key and no cookies. Conditions can change quickly; for important decisions consult the official forecast of the ' : 'servicio gratuito, sin clave API y sin cookies. Las condiciones pueden cambiar con rapidez; para decisiones importantes consulte el pronóstico oficial del '}<a href={WEATHER_LINK} target="_blank" rel="noopener" style="color:var(--green);font-weight:800">{w.imn}</a>.</p>
 </div></section>
-<script is:inline>
+<script is:inline define:vars={{ w, locale }}>
 (() => {
   const $now = document.getElementById('wt-now');
   const $fc = document.getElementById('wt-fc');
@@ -38,16 +68,16 @@ const WEATHER_LINK = 'https://www.imn.ac.cr';
     71: ['Nieve ligera', '🌨️'], 73: ['Nieve', '🌨️'], 75: ['Nieve fuerte', '❄️'], 77: ['Cristales de nieve', '❄️'],
     80: ['Chubascos ligeros', '🌦️'], 81: ['Chubascos', '🌧️'], 82: ['Chubascos fuertes', '⛈️'],
     85: ['Chubascos de nieve', '🌨️'], 86: ['Chubascos de nieve', '🌨️'],
-    95: ['Tormenta eléctrica', '⛈️'], 96: ['Tormenta con granizo', '⛈️'], 99: ['Tormenta con granizo fuerte', '⛈️']
+    95: ['Tormenta eléctrica', '⛈️'], 96: ['Tormenta con granizo', '🌧️'], 99: ['Tormenta con granizo fuerte', '🌧️']
   };
-  const DAYS_SHORT = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+  const DAYS_SHORT = w.days;
   const CACHE_KEY = 'mc-sj-weather-v1';
   const CACHE_TTL = 10 * 60 * 1000; // 10 minutos
   const codeInfo = (c) => CODES[c] || ['Condiciones variables', '🌦️'];
   const chip = (label, value) => '<span class="wt-chip">' + label + ': ' + value + '</span>';
 
   function fail() {
-    $now.innerHTML = '<p class="muted">No se pudo cargar el pronóstico en este momento. Pruebe de nuevo o consulte el pronóstico oficial del <a href="https://www.imn.ac.cr" target="_blank" rel="noopener" style="color:var(--green);font-weight:800">Instituto Meteorológico Nacional</a>.</p><div class="wt-state"><button type="button" class="wt-retry">Reintentar</button></div>';
+    $now.innerHTML = '<p class="muted">' + w.fail + '<a href="https://www.imn.ac.cr" target="_blank" rel="noopener" style="color:var(--green);font-weight:800">' + w.imn + '</a>.</p><div class="wt-state"><button type="button" class="wt-retry">' + w.retry + '</button></div>';
     $fc.innerHTML = '';
     const b = $now.querySelector('.wt-retry');
     if (b) b.addEventListener('click', load);
@@ -65,12 +95,12 @@ const WEATHER_LINK = 'https://www.imn.ac.cr';
         '<div class="wt-temp">' + Math.round(cur.temperature_2m) + '°C</div>' +
         '<div class="wt-desc">' + emo + ' ' + desc + '</div>' +
         '<div class="wt-chips">' +
-        chip('Sensación térmica', Math.round(cur.apparent_temperature) + '°') +
-        chip('Humedad', cur.relative_humidity_2m + ' %') +
-        chip('Viento', Math.round(cur.wind_speed_10m) + ' km/h') +
-        chip('Precipitación', cur.precipitation + ' mm') +
+        chip(w.feels, Math.round(cur.apparent_temperature) + '°') +
+        chip(w.humidity, cur.relative_humidity_2m + ' %') +
+        chip(w.wind, Math.round(cur.wind_speed_10m) + ' km/h') +
+        chip(w.precip, cur.precipitation + ' mm') +
         '</div>' +
-        '<div class="wt-meta">Actualizado a las ' + hh + ':' + mm + ' · datos en tiempo real</div>';
+        '<div class="wt-meta">' + w.updated + hh + ':' + mm + ' · datos en tiempo real</div>';
 
       const todayKey = new Date().toISOString().slice(0, 10);
       let cards = '';
@@ -79,7 +109,7 @@ const WEATHER_LINK = 'https://www.imn.ac.cr';
         const dt = new Date(ds + 'T00:00:00');
         const [d2, e2] = codeInfo(daily.weather_code[i]);
         const isToday = ds === todayKey;
-        const label = isToday ? 'Hoy' : DAYS_SHORT[dt.getDay()];
+        const label = isToday ? w.today : DAYS_SHORT[dt.getDay()];
         const dayNum = String(dt.getDate()).padStart(2, '0');
         const pp = daily.precipitation_probability_max[i];
         cards +=
@@ -92,15 +122,15 @@ const WEATHER_LINK = 'https://www.imn.ac.cr';
           '<span class="fc-tmp">' + Math.round(daily.temperature_2m_max[i]) + '° / <span class="lo">' + Math.round(daily.temperature_2m_min[i]) + '°</span></span>' +
           '</div>';
       }
-      $fc.innerHTML = '<p style="font-weight:850;margin:0 0 14px">Pronóstico para los próximos días</p><div class="fc-row">' + cards + '</div>';
+      $fc.innerHTML = '<p style="font-weight:850;margin:0 0 14px">' + w.forecastHeading + '</p><div class="fc-row">' + cards + '</div>';
     } catch (err) {
       fail();
     }
   }
 
   function load() {
-    $now.innerHTML = '<p class="muted">Cargando datos actuales…</p>';
-    $fc.innerHTML = '<p class="muted">Cargando pronóstico…</p>';
+    $now.innerHTML = '<p class="muted">' + w.loading + '</p>';
+    $fc.innerHTML = '<p class="muted">' + w.loadingFc + '</p>';
     let cached = null;
     try {
       const raw = sessionStorage.getItem(CACHE_KEY);

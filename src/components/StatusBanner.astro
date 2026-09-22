@@ -1,0 +1,86 @@
+---
+import type { Locale } from '../i18n';
+interface Props { locale?: Locale; }
+const { locale = 'es' } = Astro.props;
+const loadingText = locale === 'en' ? 'Checking the market status…' : 'Comprobando el estado del mercado…';
+const defaultSub = locale === 'en'
+  ? 'Municipal hours: Monday to Saturday 7:30–19:00, Sunday 8:00–18:00.'
+  : 'Horario municipal: lunes a sábado 7:30–19:00, domingo 8:00–18:00.';
+---
+<section class="status-band" id="estado">
+  <div class="wrap status-inner" aria-live="polite">
+    <div class="status-main">
+      <span class="status-dot" id="mc-status-dot" aria-hidden="true"></span>
+      <strong id="mc-status-text">{loadingText}</strong>
+    </div>
+    <div class="status-sub" id="mc-status-sub">{defaultSub}</div>
+  </div>
+</section>
+<script is:inline define:vars={{ locale }}>
+(() => {
+  const dot = document.getElementById('mc-status-dot');
+  const text = document.getElementById('mc-status-text');
+  const sub = document.getElementById('mc-status-sub');
+  if (!dot || !text || !sub) return;
+
+  // Horario en minutos desde la medianoche (Costa Rica).
+  const SCHED = {
+    0: { open: 8 * 60, close: 18 * 60 },
+    1: { open: 7 * 60 + 30, close: 19 * 60 },
+    2: { open: 7 * 60 + 30, close: 19 * 60 },
+    3: { open: 7 * 60 + 30, close: 19 * 60 },
+    4: { open: 7 * 60 + 30, close: 19 * 60 },
+    5: { open: 7 * 60 + 30, close: 19 * 60 },
+    6: { open: 7 * 60 + 30, close: 19 * 60 }
+  };
+  const WD = locale === 'en'
+    ? ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+    : ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+  const S = locale === 'en'
+    ? { open: 'Open now', closed: 'Closed now', openUntil: (d, c, o) => `${d} · open until ${c} (${o}–${c}).`, before: (d, o, r) => `Opens today (${d}) at ${o}. Hours: ${r}.`, after: (n, c, no) => `Closes at ${c}. Opens ${n} at ${no}.` }
+    : { open: 'Abierto ahora', closed: 'Cerrado ahora', openUntil: (d, c, o) => `${d} · abierto hasta las ${c} (${o}–${c}).`, before: (d, o, r) => `Abre hoy (${d}) a las ${o}. Horario: ${r}.`, after: (n, c, no) => `Cierra a las ${c}. Abre el ${n} a las ${no}.` };
+
+  function crParts() {
+    const wd = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Costa_Rica', weekday: 'short' }).format(new Date());
+    const map = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
+    const day = map[wd];
+    const hm = new Intl.DateTimeFormat('en-GB', { timeZone: 'America/Costa_Rica', hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date());
+    const [h, m] = hm.split(':').map(Number);
+    return { day, mins: h * 60 + m };
+  }
+  const fmt = (mins) => {
+    const h = Math.floor(mins / 60), m = mins % 60;
+    return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
+  };
+
+  const { day, mins } = crParts();
+  const s = SCHED[day];
+  const open = mins >= s.open && mins < s.close;
+
+  if (open) {
+    dot.className = 'status-dot is-open';
+    text.textContent = S.open;
+    sub.textContent = S.openUntil(WD[day], fmt(s.close), fmt(s.open));
+  } else if (mins < s.open) {
+    dot.className = 'status-dot is-closed';
+    text.textContent = S.closed;
+    sub.textContent = S.before(WD[day], fmt(s.open), fmt(s.open) + '–' + fmt(s.close));
+  } else {
+    dot.className = 'status-dot is-closed';
+    text.textContent = S.closed;
+    const nd = (day + 1) % 7;
+    sub.textContent = S.after(WD[nd], fmt(s.close), fmt(SCHED[nd].open));
+  }
+})();
+</script>
+<style>
+  .status-band { background: var(--green); color: #fff; padding: 14px 0; }
+  .status-inner { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 18px; }
+  .status-main { display: flex; align-items: center; gap: 12px; }
+  .status-main strong { font-size: 1.18rem; font-weight: 850; }
+  .status-sub { font-size: .92rem; opacity: .92; }
+  .status-dot { width: 13px; height: 13px; border-radius: 50%; display: inline-block; flex: none; box-shadow: 0 0 0 5px rgba(255,255,255,.18); }
+  .status-dot.is-open { background: #58e08a; }
+  .status-dot.is-closed { background: #ffd0c4; box-shadow: 0 0 0 5px rgba(255,255,255,.14); }
+  @media (max-width: 850px) { .status-inner { flex-direction: column; gap: 4px; } }
+</style>

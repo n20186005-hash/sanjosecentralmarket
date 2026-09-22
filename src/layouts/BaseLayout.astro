@@ -1,37 +1,60 @@
 ---
 import '../styles/global.css';
-interface Props { title: string; description: string; image?: string; }
-const { title, description, image='/images/mercado-central-san-jose-fachada.jpg' } = Astro.props;
+import { localizedPath, hreflangAlternates, t, type Locale } from '../i18n';
+interface Props {
+  title: string;
+  description: string;
+  locale?: Locale;
+  path?: string; // base path without locale prefix and without trailing slash ('' = home)
+  image?: string;
+}
+const {
+  title,
+  description,
+  locale = 'es',
+  path = '',
+  image = '/images/mercado-central-san-jose-fachada.jpg'
+} = Astro.props;
 const site = Astro.site;
-const canonical = site ? new URL(Astro.url.pathname, site).toString() : undefined;
+const U = t(locale);
+const canonical = site ? new URL(localizedPath(path, locale), site).toString() : undefined;
 const ogImage = site ? new URL(image, site).toString() : undefined;
 const logoUrl = site ? new URL('/icons/logo.svg', site).toString() : undefined;
+const alternates = site ? hreflangAlternates(path, site) : [];
+const ogImageAlt = locale === 'en' ? 'Central Market of San José – San José, Costa Rica' : 'Mercado Central de San José – San José, Costa Rica';
+
+const navHref = (anchor: string) => (path === '' ? '#' + anchor : localizedPath('', locale) + '#' + anchor);
+const otherLocale: Locale = locale === 'es' ? 'en' : 'es';
+const switchHref = localizedPath(path, otherLocale);
+
 const orgSchema = site ? {
-  "@context":"https://schema.org","@graph":[
-    {"@type":"WebSite","@id":site.toString()+"#website","url":site.toString(),"name":"Guía del Mercado Central de San José","description":description,"inLanguage":"es-CR","publisher":{"@id":site.toString()+"#organization"}},
-    {"@type":"Organization","@id":site.toString()+"#organization","name":"Guía del Mercado Central de San José","url":site.toString(),"logo":logoUrl?{"@type":"ImageObject","url":logoUrl}:undefined}
+  '@context': 'https://schema.org',
+  '@graph': [
+    { '@type': 'WebSite', '@id': site.toString() + '#website', url: site.toString(), name: U.siteName, inLanguage: U.htmlLang, publisher: { '@id': site.toString() + '#organization' } },
+    { '@type': 'Organization', '@id': site.toString() + '#organization', name: U.siteName, url: site.toString(), logo: logoUrl ? { '@type': 'ImageObject', url: logoUrl } : undefined }
   ]
 } : null;
 const webPageSchema = site && canonical ? {
-  "@context":"https://schema.org","@type":"WebPage","@id":canonical+"#webpage","url":canonical,"name":title,"description":description,"inLanguage":"es-CR","isPartOf":{"@id":site.toString()+"#website"},"dateModified":"2026-09-02"
+  '@context': 'https://schema.org', '@type': 'WebPage', '@id': canonical + '#webpage', url: canonical, name: title, description, inLanguage: U.htmlLang, isPartOf: { '@id': site.toString() + '#website' }, dateModified: '2026-09-02'
 } : null;
 ---
 <!doctype html>
-<html lang="es-CR">
+<html lang={U.htmlLang}>
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content={description} />
   <meta name="theme-color" content="#9f3428" />
   <title>{title}</title>
   {canonical && <link rel="canonical" href={canonical} />}
+  {alternates.map((a) => <link rel="alternate" hreflang={a.hreflang} href={a.href} />)}
   <meta property="og:type" content="website" />
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
-  <meta property="og:locale" content="es_CR" />
+  <meta property="og:locale" content={U.ogLocale} />
   {canonical && <meta property="og:url" content={canonical} />}
   {ogImage && <meta property="og:image" content={ogImage} />}
-  {ogImage && <meta property="og:image:alt" content="Mercado Central de San José – San José, Costa Rica" />}
+  {ogImage && <meta property="og:image:alt" content={ogImageAlt} />}
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg" />
   <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png" />
@@ -44,9 +67,10 @@ const webPageSchema = site && canonical ? {
 <body>
 <header class="site-header">
   <div class="wrap nav">
-    <a class="brand" href="/"><img src="/icons/logo.svg" alt="Logo Guía Mercado Central" /><span>Mercado Central<br/><small>San José</small></span></a>
+    <a class="brand" href={localizedPath('', locale)}><img src="/icons/logo.svg" alt="Logo Guía Mercado Central" /><span>Mercado Central<br/><small>San José</small></span></a>
     <nav class="nav-links" aria-label="Navegación principal">
-      <a href="/#historia">Historia</a><a href="/#historias">Tradiciones</a><a href="/#visita">Planifique</a><a href="/#comer">Dónde comer</a><a href="/#servicios">Servicios</a><a href="/#llegar">Cómo llegar</a><a href="/#faq">FAQ</a>
+      <a href={navHref('historia')}>{U.nav.historia}</a><a href={navHref('historias')}>{U.nav.historias}</a><a href={navHref('visita')}>{U.nav.visita}</a><a href={navHref('comer')}>{U.nav.comer}</a><a href={navHref('servicios')}>{U.nav.servicios}</a><a href={navHref('llegar')}>{U.nav.llegar}</a><a href={navHref('faq')}>{U.nav.faq}</a>
+      <a class="lang-switch" href={switchHref} hreflang={otherLocale} aria-label={U.langSwitch.label}>{U.langSwitch.to}</a>
     </nav>
   </div>
 </header>
@@ -55,15 +79,19 @@ const webPageSchema = site && canonical ? {
   <div class="wrap footer-grid">
     <div>
       <img src="/icons/logo.svg" alt="" width="54" height="54" />
-      <p><strong>Guía del Mercado Central de San José</strong></p>
-      <p>Este sitio es un proyecto independiente y sin fines de lucro de información para visitantes; no mantiene relación de dependencia con la Municipalidad de San José, el Instituto Costarricense de Turismo ni ninguna organización oficial.</p>
-      <p>La información del sitio se contrasta con fuentes públicas de la Municipalidad de San José, el Ministerio de Cultura y Juventud de Costa Rica y el Instituto Costarricense de Turismo. No contiene recomendaciones comerciales pagadas.</p>
-      <p>Derechos de imagen: las fotografías pertenecen a sus autores originales y se utilizan conforme a las licencias indicadas en <a href="/creditos-fotograficos/">créditos fotográficos</a>.</p>
+      <p><strong>{U.siteName}</strong></p>
+      <p>{U.footer.disclaimer1}</p>
+      <p>{U.footer.disclaimer2}</p>
+      <p>{U.footer.imageRightsPrefix}<a href={localizedPath('creditos-fotograficos', locale)}>{U.footer.imageRightsPage}</a>{U.footer.imageRightsSuffix}</p>
     </div>
     <div>
-      <div class="legal-links"><a href="/privacidad/">Privacidad</a><a href="/terminos/">Términos</a><a href="/configuracion-de-cookies/">Configurar cookies</a></div>
-      <p style="margin-top:26px">© 2026 Guía del Mercado Central de San José. Todos los derechos reservados sobre el diseño y contenido original.</p>
-      <p>Guía no oficial. Verifique horarios y condiciones con fuentes oficiales antes de desplazarse.</p>
+      <div class="legal-links">
+        <a href={localizedPath('privacidad', locale)}>{U.footer.legalLinks.privacidad}</a>
+        <a href={localizedPath('terminos', locale)}>{U.footer.legalLinks.terminos}</a>
+        <a href={localizedPath('configuracion-de-cookies', locale)}>{U.footer.legalLinks.cookies}</a>
+      </div>
+      <p style="margin-top:26px">{U.footer.copyright}</p>
+      <p>{U.footer.nonofficial}</p>
     </div>
   </div>
 </footer>
